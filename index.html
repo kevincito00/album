@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nuestro álbum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Caveat:wght@500&family=Karla:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1e1727;--bg2:#2a2036;--rose:#e9a9b6;--paper:#fbf7f2;--ink:#2b2230;--text:#efe6f0;--muted:#b9aac2}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font:400 17px/1.6 Karla,system-ui,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+h1,h2{font-family:Fraunces,Georgia,serif;font-weight:400}
+
+/* PORTADA: edita textos en el HTML */
+.cover{min-height:100vh;display:grid;place-items:center;text-align:center;padding:48px 24px;position:relative;overflow:hidden;
+ background:radial-gradient(ellipse at 50% 30%,#4a2f50 0,var(--bg) 70%)}
+.cover-photo{width:min(300px,70vw);background:var(--paper);padding:12px 12px 56px;transform:rotate(-3deg);box-shadow:0 20px 50px #0008;margin:0 auto 40px;position:relative}
+.cover-photo .img{aspect-ratio:1;background:#ddd center/cover}
+.cover-photo span{position:absolute;bottom:14px;left:0;right:0;font:500 26px Caveat,cursive;color:var(--ink)}
+.cover h1{font-size:clamp(2.6rem,10vw,5.5rem);line-height:1.05;font-style:italic}
+.cover p.names{font-family:Fraunces,serif;font-size:1.3rem;color:var(--rose);margin-top:14px}
+.cover p.date{color:var(--muted);margin-top:4px}
+.nav{display:flex;gap:12px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.nav a{color:var(--text);text-decoration:none;border:1px solid var(--rose);padding:10px 22px;border-radius:99px;transition:.2s}
+.nav a:hover,.nav a:focus-visible{background:var(--rose);color:var(--ink);outline:none}
+.cover-in{animation:in 1.2s ease both}
+@keyframes in{from{opacity:0;transform:translateY(20px)}}
+
+section{padding:80px 20px;max-width:1100px;margin:auto}
+section h2{font-size:clamp(2rem,6vw,3rem);text-align:center}
+section .sub{text-align:center;color:var(--muted);margin:6px 0 48px}
+
+/* POLAROIDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:36px 28px}
+.pol{background:var(--paper);padding:10px 10px 46px;position:relative;border:0;cursor:pointer;box-shadow:0 10px 26px #0006;
+ transition:transform .25s;text-align:left;font:inherit}
+.pol:nth-child(odd){transform:rotate(-2deg)}
+.pol:nth-child(even){transform:rotate(2.2deg)}
+.pol:nth-child(3n){transform:rotate(-.6deg)}
+.pol:hover,.pol:focus-visible{transform:rotate(0) scale(1.04);z-index:2;outline:2px solid var(--rose)}
+.pol .img{aspect-ratio:1;background:center/cover;background-color:#d8cdd8}
+.pol .cap{position:absolute;left:10px;right:10px;bottom:10px;text-align:center;font:500 22px Caveat,cursive;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* VÍDEOS */
+.band{background:var(--bg2)}
+.vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px}
+.vid{background:var(--paper);padding:12px 12px 16px;box-shadow:0 10px 26px #0006;color:var(--ink)}
+.vid .frame{aspect-ratio:16/9;background:#161018;display:grid;place-items:center;color:var(--muted);font-size:.95rem;text-align:center}
+.vid iframe,.vid video{width:100%;height:100%;border:0;display:block}
+.vid .cap{font:500 24px Caveat,cursive;text-align:center;margin-top:10px}
+
+footer{text-align:center;padding:60px 20px calc(60px + env(safe-area-inset-bottom));color:var(--muted);font-family:Fraunces,serif;font-style:italic}
+
+/* VISOR */
+.lb{position:fixed;inset:0;background:#000d;display:none;place-items:center;z-index:10;padding:20px}
+.lb.on{display:grid}
+.lb figure{background:var(--paper);padding:12px 12px 20px;max-width:min(92vw,820px);color:var(--ink);text-align:center}
+.lb .big{width:min(80vw,760px);height:min(68vh,760px);background:center/contain no-repeat #ddd}
+.lb figcaption{font:500 26px Caveat,cursive;margin-top:8px}
+.lb button{position:absolute;background:none;border:0;color:#fff;font-size:2.4rem;cursor:pointer;padding:12px}
+.lb .x{top:calc(8px + env(safe-area-inset-top));right:10px}.lb .p{left:6px}.lb .n{right:6px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="cover">
+ <div class="cover-in">
+  <div class="cover-photo"><div class="img" id="coverImg"></div><span>nosotros</span></div>
+  <h1>Nuestra historia</h1>
+  <p class="names">Ana &amp; Carlos</p>
+  <p class="date">Juntos desde el 14 de febrero de 2022</p>
+  <nav class="nav"><a href="#fotos">Fotos</a><a href="#videos">Vídeos</a></nav>
+ </div>
+</header>
+
+<section id="fotos">
+ <h2>Nuestras fotos</h2>
+ <p class="sub">Toca una foto para verla grande</p>
+ <div class="grid" id="photos"></div>
+</section>
+
+<div class="band"><section id="videos">
+ <h2>Nuestros vídeos</h2>
+ <p class="sub">Los momentos que queremos revivir</p>
+ <div class="vids" id="videos-list"></div>
+</section></div>
+
+<footer>Hecho con cariño, para siempre.</footer>
+
+<div class="lb" id="lb" role="dialog" aria-label="Visor de fotos">
+ <button class="x" aria-label="Cerrar">×</button><button class="p" aria-label="Anterior">‹</button><button class="n" aria-label="Siguiente">›</button>
+ <figure><div class="big" id="big"></div><figcaption id="lcap"></figcaption></figure>
+</div>
+
+<script>
+/* ===== EDITA AQUÍ =====
+   Foto de portada: ruta de una imagen (déjalo "" para ver el color de ejemplo). */
+const COVER = "";
+
+/* Fotos: pon tus archivos en la carpeta "fotos" y escribe su nombre. */
+const PHOTOS = [
+  {src:"", cap:"Nuestra primera cita"},
+  {src:"", cap:"Ese viaje"},
+  {src:"", cap:"Domingo de pelis"},
+  {src:"", cap:"Con los amigos"},
+  {src:"", cap:"Atardecer"},
+  {src:"", cap:"Nuestro cumple"}
+];
+/* Vídeos: de YouTube (solo el ID, el código después de v=) o archivo en carpeta "videos". */
+const VIDEOS = [
+  {yt:"", cap:"Nuestro viaje"},
+  {file:"", cap:"Un momento especial"}
+];
+/* ======================== */
+
+const ph = i => `linear-gradient(135deg,hsl(${330+i*18},45%,${72-i*3}%),hsl(${270+i*14},35%,${60-i*2}%))`;
+const bg = (s,i) => s ? `url("${s}")` : ph(i);
+const $ = id => document.getElementById(id);
+
+$("coverImg").style.background = COVER ? `url("${COVER}") center/cover` : ph(0);
+
+const grid = $("photos");
+PHOTOS.forEach((p,i)=>{
+  const b = document.createElement("button");
+  b.className = "pol"; b.setAttribute("aria-label", p.cap);
+  b.innerHTML = `<div class="img"></div><div class="cap"></div>`;
+  b.firstChild.style.backgroundImage = bg(p.src,i);
+  b.lastChild.textContent = p.cap;
+  b.onclick = () => open(i);
+  grid.append(b);
+});
+
+const vl = $("videos-list");
+VIDEOS.forEach(v=>{
+  const d = document.createElement("div"); d.className = "vid";
+  let inner = `<div class="frame">Añade tu vídeo en la lista VIDEOS</div>`;
+  if (v.yt) inner = `<div class="frame"><iframe src="https://www.youtube.com/embed/${encodeURIComponent(v.yt)}" allowfullscreen loading="lazy" title="${v.cap}"></iframe></div>`;
+  else if (v.file) inner = `<div class="frame"><video src="${v.file}" controls playsinline preload="metadata"></video></div>`;
+  d.innerHTML = inner + `<div class="cap"></div>`;
+  d.lastChild.textContent = v.cap;
+  vl.append(d);
+});
+
+let cur = 0; const lb = $("lb");
+function show(){ const p = PHOTOS[cur]; $("big").style.background = p.src ? `url("${p.src}") center/contain no-repeat #ddd` : ph(cur); $("lcap").textContent = p.cap; }
+function open(i){ cur = i; show(); lb.classList.add("on"); }
+const close = () => lb.classList.remove("on");
+const step = d => { cur = (cur + d + PHOTOS.length) % PHOTOS.length; show(); };
+lb.querySelector(".x").onclick = close;
+lb.querySelector(".p").onclick = () => step(-1);
+lb.querySelector(".n").onclick = () => step(1);
+lb.onclick = e => { if (e.target === lb) close(); };
+document.addEventListener("keydown", e => {
+  if (!lb.classList.contains("on")) return;
+  if (e.key === "Escape") close();
+  if (e.key === "ArrowLeft") step(-1);
+  if (e.key === "ArrowRight") step(1);
+});
+</script>
+</body>
+</html>
