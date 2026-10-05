@@ -93,23 +93,6 @@ section{position:relative;z-index:1;min-height:100vh;min-height:100svh;scroll-sn
 @media (prefers-reduced-motion:reduce){.dots i{animation:none!important}}
 
 @media (prefers-reduced-motion:reduce){.heart{animation:none;bottom:auto;top:calc(var(--y)*1%)}html{scroll-behavior:auto}}
-
-/* VISOR (foto/vídeo a pantalla completa) */
-.polaroid .ph img,.polaroid .ph video{cursor:zoom-in}
-.lb-btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
-#lb{position:fixed;inset:0;z-index:100;background:rgba(0,22,22,.94);display:none;align-items:center;justify-content:center;
-  padding:calc(env(safe-area-inset-top,0px) + 56px) 10px calc(env(safe-area-inset-bottom,0px) + 56px);touch-action:pan-y}
-#lb.on{display:flex}
-#lb .stage{display:flex;flex-direction:column;align-items:center;gap:10px;max-width:100%;max-height:100%}
-#lb .stage img,#lb .stage video{max-width:96vw;max-height:calc(100vh - 170px);max-height:calc(100svh - 170px);object-fit:contain;border-radius:6px;background:#000;box-shadow:0 10px 40px rgba(0,0,0,.5)}
-#lb .cap{font-family:var(--hand);font-size:1.7rem;color:#fff;text-align:center}
-#lb .count{position:absolute;top:calc(env(safe-area-inset-top,0px) + 20px);left:20px;color:#d6f3ef;font-size:.9rem;letter-spacing:.1em}
-.lb-btn{position:absolute;border:0;background:rgba(255,255,255,.16);color:#fff;width:46px;height:46px;border-radius:50%;cursor:pointer;display:grid;place-items:center;padding:0}
-.lb-btn:hover{background:rgba(255,255,255,.3)}
-.lb-btn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-#lbClose{top:calc(env(safe-area-inset-top,0px) + 12px);right:14px}
-#lbPrev,#lbNext{top:50%;margin-top:-23px}
-#lbPrev{left:10px}#lbNext{right:10px}
 </style>
 </head>
 <body>
@@ -132,7 +115,7 @@ const ALBUM = {
   paginas: [
     { titulo: "Nuestras fotos", texto: "Escribe aquí un recuerdo de ese día.",
       fotos: [
-        {src:"fotos/foto1.jpg", pie:"Primer día"},
+        {src:"e2a551bf-ba15-4abc-8fff-d4f0e5886cfd.jpeg", pie:"Embarazados "},
         {src:"fotos/foto2.jpg", pie:"Nuestra primera cita"},
         {src:"fotos/foto3.jpg", pie:"Playa"},
         {src:"fotos/foto4.jpg", pie:"Montaña"},
@@ -158,7 +141,7 @@ const ALBUM = {
 
 const app = document.getElementById('app');
 const media = (f) => f.video
-  ? `<div class="ph"><span>Tu vídeo aquí<br>${f.video}</span><video src="${f.video}" ${f.poster?`poster="${f.poster}"`:''} muted playsinline preload="metadata" onerror="this.remove()"></video></div>`
+  ? `<div class="ph"><span>Tu vídeo aquí<br>${f.video}</span><video src="${f.video}" ${f.poster?`poster="${f.poster}"`:''} controls playsinline preload="metadata" onerror="this.remove()"></video></div>`
   : `<div class="ph"><span>Tu foto aquí<br>${f.src}</span><img src="${f.src}" alt="${f.pie||''}" loading="lazy" onerror="this.remove()"></div>`;
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[Math.floor(Math.random() * a.length)];
@@ -183,7 +166,7 @@ let html = `
 ALBUM.paginas.forEach((p, i) => {
   html += `<section class="page" id="p${i+1}">
     <h2 class="cut" aria-label="${p.titulo}">${cut(p.titulo)}</h2>
-    <div class="photos">${p.fotos.map((f,j)=>`<figure class="polaroid" data-p="${i}" data-i="${j}" style="--t:${rnd(-7,7).toFixed(1)}deg;--tape:${pick(['rgba(255,255,255,.62)','rgba(255,228,94,.72)','rgba(255,79,123,.55)','rgba(242,232,201,.8)'])};--r:${rnd(-9,9).toFixed(1)}deg;--x:${rnd(-22,22).toFixed(0)}px;--y:${rnd(-18,34).toFixed(0)}px">${media(f)}<figcaption>${f.pie||''}</figcaption></figure>`).join('')}</div>
+    <div class="photos">${p.fotos.map(f=>`<figure class="polaroid" style="--t:${rnd(-7,7).toFixed(1)}deg;--tape:${pick(['rgba(255,255,255,.62)','rgba(255,228,94,.72)','rgba(255,79,123,.55)','rgba(242,232,201,.8)'])};--r:${rnd(-9,9).toFixed(1)}deg;--x:${rnd(-22,22).toFixed(0)}px;--y:${rnd(-18,34).toFixed(0)}px">${media(f)}<figcaption>${f.pie||''}</figcaption></figure>`).join('')}</div>
     <p class="note">${p.texto||''}</p>
   </section>`;
 });
@@ -258,61 +241,6 @@ aud.onerror = () => $('msg').textContent = 'Añade tu canción en ' + songs[idx]
 $('bar').onclick = e => { const r = e.currentTarget.getBoundingClientRect();
   if (aud.duration) aud.currentTime = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * aud.duration; };
 load(0, false);
-
-
-/* Visor: ampliar fotos y vídeos */
-const SV = d => `<svg viewBox="0 0 24 24"><path d="${d}"/></svg>`;
-const lb = document.createElement('div');
-lb.id = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.hidden = false;
-lb.innerHTML = `<span class="count" id="lbCount"></span>
-  <button class="lb-btn" id="lbClose" aria-label="Cerrar">${SV('M6 6l12 12M18 6L6 18')}</button>
-  <button class="lb-btn" id="lbPrev" aria-label="Anterior">${SV('M15 5l-7 7 7 7')}</button>
-  <button class="lb-btn" id="lbNext" aria-label="Siguiente">${SV('M9 5l7 7-7 7')}</button>
-  <div class="stage" id="lbStage"></div>`;
-document.body.appendChild(lb);
-let lbP = 0, lbI = 0;
-function lbShow(p, i) {
-  const list = ALBUM.paginas[p].fotos;
-  lbP = p; lbI = (i + list.length) % list.length;
-  const f = list[lbI];
-  const el = f.video
-    ? document.createElement('video') : document.createElement('img');
-  if (f.video) { el.src = f.video; if (f.poster) el.poster = f.poster; el.controls = true; el.autoplay = true; el.playsInline = true; }
-  else { el.src = f.src; el.alt = f.pie || ''; }
-  const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = f.pie || '';
-  const st = $('lbStage'); st.replaceChildren(el, cap);
-  $('lbCount').textContent = (lbI + 1) + ' / ' + list.length;
-  const multi = list.length > 1;
-  $('lbPrev').style.display = $('lbNext').style.display = multi ? '' : 'none';
-}
-function lbOpen(p, i) {
-  document.querySelectorAll('.polaroid video').forEach(v => v.pause());
-  lbShow(p, i); lb.classList.add('on'); document.body.style.overflow = 'hidden';
-}
-function lbClose() {
-  lb.classList.remove('on'); $('lbStage').replaceChildren(); document.body.style.overflow = '';
-}
-app.addEventListener('click', e => {
-  const fig = e.target.closest('.polaroid');
-  if (!fig || !fig.querySelector('img,video')) return;
-  lbOpen(+fig.dataset.p, +fig.dataset.i);
-});
-$('lbClose').onclick = lbClose;
-$('lbPrev').onclick = () => lbShow(lbP, lbI - 1);
-$('lbNext').onclick = () => lbShow(lbP, lbI + 1);
-lb.addEventListener('click', e => { if (e.target === lb || e.target.id === 'lbStage') lbClose(); });
-addEventListener('keydown', e => {
-  if (!lb.classList.contains('on')) return;
-  if (e.key === 'Escape') lbClose();
-  else if (e.key === 'ArrowLeft') lbShow(lbP, lbI - 1);
-  else if (e.key === 'ArrowRight') lbShow(lbP, lbI + 1);
-});
-let tx = null;
-lb.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive: true});
-lb.addEventListener('touchend', e => {
-  if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null;
-  if (Math.abs(dx) > 60) lbShow(lbP, lbI + (dx < 0 ? 1 : -1));
-});
 
 /* Mostrar corazones solo fuera de la portada */
 new IntersectionObserver(([e]) => box.classList.toggle('on', !e.isIntersecting), {threshold: .6})
