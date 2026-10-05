@@ -42,10 +42,8 @@ section .sub{text-align:center;color:var(--muted);margin:6px 0 48px}
 .pol{--r:0deg;--s:1;--tc:#ffffffb8;background:var(--paper);padding:10px 10px 68px;position:absolute;border:0;cursor:pointer;box-shadow:2px 12px 24px -4px #0007,0 2px 4px #0004;rotate:var(--r);
  transition:rotate .3s,scale .3s,opacity .8s,translate .8s;text-align:left;font:inherit}
 .pol::before{content:"";position:absolute;top:-13px;left:50%;width:74px;height:26px;margin-left:-37px;background:var(--tc);rotate:var(--tr,-3deg);box-shadow:0 1px 3px #0003}
-.pol video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.pol.isvid .img::after{content:"";position:absolute;right:8px;bottom:8px;width:28px;height:28px;border-radius:50%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 6v12l9-6z'/%3E%3C/svg%3E") center/72% no-repeat,#000a}
 .pol:hover,.pol:focus-visible{rotate:0deg;scale:1.07;z-index:20!important;outline:2px solid var(--rose)}
-.pol .img{position:relative;overflow:hidden;aspect-ratio:var(--ar,1);background:center/cover;background-color:#cfe3e3}
+.pol .img{aspect-ratio:var(--ar,1);background:center/cover;background-color:#cfe3e3}
 .pol .cap{position:absolute;left:12px;right:12px;bottom:8px;height:52px;display:flex;align-items:center;justify-content:center;text-align:center;font:500 22px/1.05 Caveat,cursive;color:var(--ink);overflow:hidden}
 
 /* VÍDEOS */
@@ -167,7 +165,6 @@ footer{text-align:center;padding:60px 20px calc(60px + env(safe-area-inset-botto
 .lb{position:fixed;inset:0;background:#000d;display:none;place-items:center;z-index:10;padding:20px}
 .lb.on{display:grid}
 .lb figure{background:var(--paper);padding:12px 12px 20px;max-width:min(92vw,820px);color:var(--ink);text-align:center}
-.lb video.big{background:#000;object-fit:contain;display:block}
 .lb .big{width:min(80vw,760px);height:min(68vh,760px);background:center/contain no-repeat #ddd}
 .lb figcaption{font:500 26px Caveat,cursive;margin-top:8px}
 .lb button{position:absolute;background:none;border:0;color:#fff;font-size:2.4rem;cursor:pointer;padding:12px}
@@ -231,23 +228,21 @@ footer{text-align:center;padding:60px 20px calc(60px + env(safe-area-inset-botto
 
 <div class="lb" id="lb" role="dialog" aria-label="Visor de fotos">
  <button class="x" aria-label="Cerrar">×</button><button class="p" aria-label="Anterior">‹</button><button class="n" aria-label="Siguiente">›</button>
- <figure><div class="big" id="big"></div><iframe class="big" id="lyt" allow="autoplay; fullscreen" allowfullscreen style="display:none;border:0;background:#000"></iframe><video class="big" id="lvid" controls playsinline loop style="display:none;background:#000;object-fit:contain"></video><figcaption id="lcap"></figcaption></figure>
+ <figure><div class="big" id="big"></div><figcaption id="lcap"></figcaption></figure>
 </div>
 
 <script>
 /* ===== EDITA AQUÍ ===== */
 
-/* Fotos: pon tus archivos en la carpeta "fotos" y escribe su nombre.
-   Para que una sea un vídeo corto, pon su archivo en video:"" (por ejemplo video:"cumple.mp4").
-   Se reproduce solo, sin sonido y en bucle; src es su imagen de portada. */
+/* Fotos: pon tus archivos en la carpeta "fotos" y escribe su nombre. */
 const PHOTOS = [
   {src:"IMG_7888.jpeg", cap:"Nuestra primera cita"},
   {src:"IMG_2670.jpeg", cap:"Lechita de cabra 🐐"},
   {src:"IMG_2434.jpeg", cap:"Timidines 😳 "},
   {src:"FullSizeRender.jpeg", cap:"Con los amigos"},
   {src:"e2a551bf-ba15-4abc-8fff-d4f0e5886cfd.jpeg", cap:"Embarazados 🍣"},
-  {video:"IMG_8488.mp4", src:"", cap:"Helado de limón 🍦"}
-;
+  {src:"IMG_2362.jpeg", cap:"Nuestro cumple"}
+];
 /* Vídeo: de YouTube (solo el ID, el código después de v=) con yt, o un archivo de la carpeta "videos" con file. */
 const VIDEOS = [
   {yt:"", cap:"Nuestro viaje"}
@@ -284,22 +279,12 @@ const pols = [];
 let seed = 7; const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
 const R = (a,b) => a + rnd() * (b - a);
 const TAPES = ["#ffffffb8","#ffe98fb0","#f6b6c8b0","#bff0e8b8"];
-const vio = new IntersectionObserver(es => es.forEach(e => { const v = e.target; e.isIntersecting ? v.play().catch(()=>{}) : v.pause(); }), {threshold:.3});
 PHOTOS.forEach((p,i)=>{
   const b = document.createElement("button");
   b.className = "pol"; b.setAttribute("aria-label", p.cap);
   b.innerHTML = `<div class="img"></div><div class="cap"></div>`;
   b.firstChild.style.backgroundImage = bg(p.src,i);
   b.lastChild.textContent = p.cap;
-if (p.video) b.classList.add("isvid"); 
-  if (p.video) {
-    b.classList.add("isvid");
-    const v = document.createElement("video");
-    v.src = p.video; if (p.src) v.poster = p.src;
-    v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata";
-    v.setAttribute("muted", ""); v.setAttribute("playsinline", "");
-    b.firstChild.append(v); vio.observe(v);
-  }
   b.onclick = () => open(i);
   /* Colocación "al azar" pero fija: siempre se ve igual */
   b.style.setProperty("--r", R(-14,14).toFixed(1) + "deg");
@@ -448,20 +433,9 @@ loadSong();
 
 let cur = 0; const lb = $("lb");
 let LIST = PHOTOS;
- function ytId(u){const m=String(u||"").match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([\w-]{11})/);return m?m[1]:null}
-function show(){
-  const p = LIST[cur], f = $("lyt"), v = $("lvid"), big = $("big"), id = ytId(p.video);
-  f.style.display = "none"; f.removeAttribute("src"); v.style.display = "none"; v.pause(); v.removeAttribute("src"); big.style.display = "none";
-  if (id) { f.style.display = "block"; f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&playsinline=1&rel=0"; }
-  else if (p.video) { v.style.display = "block"; v.poster = p.src || ""; v.src = p.video; v.play().catch(()=>{}); }
-  else { big.style.display = ""; big.style.background = p.src ? `url("${p.src}") center/contain no-repeat #ddd` : ph(cur); }
-  $("lcap").textContent = p.cap;
-}
-new MutationObserver(() => { if (!lb.classList.contains("on")) { $("lyt").removeAttribute("src"); $("lvid").pause(); } }).observe(lb, {attributes:true, attributeFilter:["class"]});
-
-
+function show(){ const p = LIST[cur]; $("big").style.background = p.src ? `url("${p.src}") center/contain no-repeat #ddd` : ph(cur); $("lcap").textContent = p.cap; }
 function open(i,l=PHOTOS){ LIST = l; cur = i; show(); lb.classList.add("on"); }
-const close = () => { lb.classList.remove("on"); $("lvid").pause(); };
+const close = () => lb.classList.remove("on");
 const step = d => { cur = (cur + d + LIST.length) % LIST.length; show(); };
 lb.querySelector(".x").onclick = close;
 lb.querySelector(".p").onclick = () => step(-1);
