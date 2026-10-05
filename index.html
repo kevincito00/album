@@ -48,35 +48,11 @@ section .sub{text-align:center;color:var(--muted);margin:6px 0 48px}
 
 /* VÍDEOS */
 .band{background:var(--bg)}
-.vids{display:grid;grid-template-columns:minmax(0,560px);justify-content:center}
+.vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:40px 28px;max-width:960px;margin:auto}
 .vid{transition:opacity .8s,translate .8s}
-.cam{position:relative;padding-top:18px;filter:drop-shadow(0 22px 20px #0008)}
-.camtop{position:relative;height:40px;margin:0 6px;border-radius:14px 14px 0 0;background:linear-gradient(#f4f7f9,#b5bdc3 45%,#dfe4e8 60%,#8e969c);box-shadow:inset 0 2px 2px #fff,inset 0 -2px 3px #0005}
-.camtop i{display:block;position:absolute}
-.hump{left:50%;top:-16px;width:92px;height:24px;margin-left:-46px;border-radius:12px 12px 0 0;background:linear-gradient(#d3d9de,#8e969c);box-shadow:inset 0 2px 2px #fff9}
-.hump::after{content:"";position:absolute;left:12px;right:12px;top:9px;height:5px;background:#2b2d30;border-radius:2px}
-.dial{left:12%;top:-8px;width:44px;height:44px;border-radius:50%;background:repeating-conic-gradient(#1b1c1e 0 5deg,#4a4d52 5deg 10deg);box-shadow:0 3px 6px #0008}
-.dial::after{content:"";position:absolute;inset:9px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2f2f2,#9a9fa4 55%,#555)}
-.shut{right:12%;top:-6px;width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f5f5f5,#9a9fa4 55%,#555);box-shadow:0 3px 5px #0008,inset 0 0 0 4px #2b2d30}
-.cambody{position:relative;display:grid;grid-template-columns:1fr 88px;gap:12px;padding:16px;border-radius:8px 8px 24px 24px;background:radial-gradient(#ffffff12 1px,#0000 1.6px) 0 0/6px 6px,linear-gradient(#2c2e32,#131416);box-shadow:inset 0 2px 2px #fff2,inset 0 -3px 6px #000}
-.cambody::before,.cambody::after{content:"";position:absolute;top:12px;width:9px;height:22px;border-radius:4px;background:linear-gradient(#c3c9ce,#7b838a)}
-.cambody::before{left:-5px}.cambody::after{right:-5px}
-.lcd{align-self:start;background:#0b0b0c;border-radius:10px;padding:8px;box-shadow:inset 0 0 0 2px #3a3d42,0 1px 0 #ffffff22}
-.screen{position:relative;border-radius:6px;overflow:hidden;background:#000}
-.screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,#fff0 34%,#ffffff1c 45%,#fff0 56%)}
-.scr{aspect-ratio:16/9;display:grid;place-items:center;background:#101820;color:#9fc9cb;font-size:.9rem;text-align:center;padding:8px}
-.scr iframe,.scr video{width:100%;height:100%;border:0;display:block}
-.hud{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font:600 .72rem/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.08em;color:#cfeeee}
-.hud em{font-style:normal;color:#ff5a4d;animation:blink 1.4s steps(2) infinite}
-@keyframes blink{50%{opacity:.15}}
-.hud s{display:block;position:relative;width:20px;height:9px;border:1.5px solid #cfeeee;border-radius:2px;text-decoration:none}
-.hud s::after{content:"";position:absolute;inset:1.5px 4px 1.5px 1.5px;background:#7fe3d5}
-.ctl{display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:2px}
-.wheel{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#0000 0 52%,#0006 53%),conic-gradient(#8f979d,#e5e9ec,#8f979d,#e5e9ec,#8f979d);box-shadow:0 3px 7px #000a,inset 0 0 0 3px #1b1c1e}
-.wheel b{display:block;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a3d42,#17181a);box-shadow:inset 0 0 0 2px #0008,0 1px 0 #fff4}
-.btns{display:flex;gap:8px}
-.btns i{display:block;width:20px;height:12px;border-radius:6px;background:linear-gradient(#5a5e64,#2c2e32);box-shadow:0 2px 3px #000a,inset 0 1px 0 #fff3}
-.recbtn{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a8f,#d9362b 55%,#7a1810);box-shadow:0 3px 5px #000a,inset 0 0 0 3px #1b1c1e}
+.vid .frame-v{border-radius:14px;overflow:hidden;background:#000;box-shadow:0 20px 40px -10px #0008}
+.vid .frame-v video,.vid .frame-v iframe{width:100%;aspect-ratio:16/9;display:block;border:0;background:#000}
+.vid .nov{aspect-ratio:16/9;display:grid;place-items:center;background:#101820;color:#9fc9cb;text-align:center;padding:8px}
 .vid .cap{font:500 26px Caveat,cursive;text-align:center;margin-top:14px;color:var(--text)}
 
 footer{text-align:center;padding:60px 20px calc(60px + env(safe-area-inset-bottom));color:var(--muted);font-family:Fraunces,serif;font-style:italic}
@@ -111,7 +87,7 @@ footer{text-align:center;padding:60px 20px calc(60px + env(safe-area-inset-botto
 .hearts>section{position:relative;z-index:1}
 
 /* CUADROS */
-.wall{background:url("https://github.com/kevincito00/album/blob/main/photo-1580655653885-65763b2597d0.jpg"),var(--bg)}
+.wall{background:url("photo-1580655653885-65763b2597d0.jpg") center/cover no-repeat,var(--bg)}
 .arts{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:40px 40px;align-items:end}
 .art{--f1:#8a5a32;--f2:#4f2f16;--f3:#3a2210;--f4:#6e4525;position:relative;border:0;background:none;cursor:pointer;padding:46px 0 0;text-align:center;font:inherit;color:inherit;transition:opacity .8s,translate .8s}
 .art:nth-child(3n+2){--f1:#3b3b3b;--f2:#171717;--f3:#0a0a0a;--f4:#282828}
@@ -200,7 +176,7 @@ footer{text-align:center;padding:60px 20px calc(60px + env(safe-area-inset-botto
 </section></div>
 
 <div class="band"><section id="videos">
- <h2>Nuestro vídeo</h2>
+ <h2>Nuestros vídeos</h2>
  <p class="sub">Los momentos que queremos revivir</p>
  <div class="vids" id="videos-list"></div>
 </section></div>
@@ -243,7 +219,8 @@ const PHOTOS = [
   {src:"e2a551bf-ba15-4abc-8fff-d4f0e5886cfd.jpeg", cap:"Embarazados 🍣"},
   {src:"IMG_2362.jpeg", cap:"Nuestro cumple"}
 ];
-/* Vídeo: de YouTube (solo el ID, el código después de v=) con yt, o un archivo de la carpeta "videos" con file. */
+/* Vídeos: de YouTube (solo el ID, el código después de v=) con yt, o un archivo subido junto al HTML con file.
+   Añade más líneas separadas por coma (la última sin coma). El .mp4 debe estar en H.264. */
 const VIDEOS = [
   {file:"IMG_8488.mp4", cap:"Nuestro viaje"}
 ];
@@ -322,10 +299,10 @@ layout(); addEventListener("resize", layout);
 const vl = $("videos-list");
 VIDEOS.forEach(v=>{
   const d = document.createElement("div"); d.className = "vid";
-  let inner = `<div class="scr">Sin vídeo<br>Añádelo en la lista VIDEOS</div>`;
-  if (v.yt) inner = `<div class="scr"><iframe src="https://www.youtube.com/embed/${encodeURIComponent(v.yt)}" allowfullscreen loading="lazy" title="${v.cap}"></iframe></div>`;
-  else if (v.file) inner = `<div class="scr"><video src="${v.file}" controls playsinline preload="metadata"></video></div>`;
-  d.innerHTML = `<div class="cam"><div class="camtop"><i class="hump"></i><i class="dial"></i><i class="shut"></i></div><div class="cambody"><div class="lcd"><div class="screen">${inner}</div><div class="hud"><em>● REC</em><span>AF · ISO 100</span><s></s></div></div><div class="ctl"><div class="wheel"><b></b></div><div class="btns"><i></i><i></i><i></i></div><div class="recbtn"></div></div></div></div><div class="cap"></div>`;
+  let inner = `<div class="nov">Sin vídeo<br>Añádelo en la lista VIDEOS</div>`;
+  if (v.yt) inner = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(v.yt)}" allowfullscreen loading="lazy" title="${v.cap}"></iframe>`;
+  else if (v.file) inner = `<video src="${v.file}" controls playsinline preload="metadata"></video>`;
+  d.innerHTML = `<div class="frame-v">${inner}</div><div class="cap"></div>`;
   d.lastChild.textContent = v.cap;
   vl.append(d);
 });
@@ -442,7 +419,7 @@ lb.querySelector(".p").onclick = () => step(-1);
 lb.querySelector(".n").onclick = () => step(1);
 lb.onclick = e => { if (e.target === lb) close(); };
 document.addEventListener("keydown", e => {
-  if (!lb.classList.contains("on")) return;
+  if (!lb.classList.contains("open") && !lb.classList.contains("on")) return;
   if (e.key === "Escape") close();
   if (e.key === "ArrowLeft") step(-1);
   if (e.key === "ArrowRight") step(1);
