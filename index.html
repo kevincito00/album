@@ -231,7 +231,7 @@ footer{text-align:center;padding:60px 20px calc(60px + env(safe-area-inset-botto
 
 <div class="lb" id="lb" role="dialog" aria-label="Visor de fotos">
  <button class="x" aria-label="Cerrar">×</button><button class="p" aria-label="Anterior">‹</button><button class="n" aria-label="Siguiente">›</button>
- <figure><div class="big" id="big"></div><video class="big" id="lvid" controls playsinline loop style="display:none"></video><figcaption id="lcap"></figcaption></figure>
+ <figure><div class="big" id="big"></div><iframe class="big" id="lyt" allow="autoplay; fullscreen" allowfullscreen style="display:none;border:0;background:#000"></iframe><video class="big" id="lvid" controls playsinline loop style="display:none;background:#000;object-fit:contain"></video><figcaption id="lcap"></figcaption></figure>
 </div>
 
 <script>
@@ -246,8 +246,8 @@ const PHOTOS = [
   {src:"IMG_2434.jpeg", cap:"Timidines 😳 "},
   {src:"FullSizeRender.jpeg", cap:"Con los amigos"},
   {src:"e2a551bf-ba15-4abc-8fff-d4f0e5886cfd.jpeg", cap:"Embarazados 🍣"},
-  {video:"", src:"IMG_8488.mov", cap:"Helado de limón"}
-];
+  {video:"cumple.mov", src:"IMG_2362.jpeg", cap:"Nuestro cumple"}
+;
 /* Vídeo: de YouTube (solo el ID, el código después de v=) con yt, o un archivo de la carpeta "videos" con file. */
 const VIDEOS = [
   {yt:"", cap:"Nuestro viaje"}
@@ -291,6 +291,7 @@ PHOTOS.forEach((p,i)=>{
   b.innerHTML = `<div class="img"></div><div class="cap"></div>`;
   b.firstChild.style.backgroundImage = bg(p.src,i);
   b.lastChild.textContent = p.cap;
+if (p.video) b.classList.add("isvid"); 
   if (p.video) {
     b.classList.add("isvid");
     const v = document.createElement("video");
@@ -447,12 +448,18 @@ loadSong();
 
 let cur = 0; const lb = $("lb");
 let LIST = PHOTOS;
+ function ytId(u){const m=String(u||"").match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([\w-]{11})/);return m?m[1]:null}
 function show(){
-  const p = LIST[cur], v = $("lvid"), big = $("big");
-  if (p.video) { big.style.display = "none"; v.style.display = "block"; v.poster = p.src || ""; v.src = p.video; v.play().catch(()=>{}); }
-  else { v.pause(); v.removeAttribute("src"); v.style.display = "none"; big.style.display = ""; big.style.background = p.src ? `url("${p.src}") center/contain no-repeat #ddd` : ph(cur); }
+  const p = LIST[cur], f = $("lyt"), v = $("lvid"), big = $("big"), id = ytId(p.video);
+  f.style.display = "none"; f.removeAttribute("src"); v.style.display = "none"; v.pause(); v.removeAttribute("src"); big.style.display = "none";
+  if (id) { f.style.display = "block"; f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&playsinline=1&rel=0"; }
+  else if (p.video) { v.style.display = "block"; v.poster = p.src || ""; v.src = p.video; v.play().catch(()=>{}); }
+  else { big.style.display = ""; big.style.background = p.src ? `url("${p.src}") center/contain no-repeat #ddd` : ph(cur); }
   $("lcap").textContent = p.cap;
 }
+new MutationObserver(() => { if (!lb.classList.contains("on")) { $("lyt").removeAttribute("src"); $("lvid").pause(); } }).observe(lb, {attributes:true, attributeFilter:["class"]});
+
+
 function open(i,l=PHOTOS){ LIST = l; cur = i; show(); lb.classList.add("on"); }
 const close = () => { lb.classList.remove("on"); $("lvid").pause(); };
 const step = d => { cur = (cur + d + LIST.length) % LIST.length; show(); };
