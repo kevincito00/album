@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nuestro álbum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=DM+Sans:wght@400;500;700&family=Caveat:wght@600&family=Oswald:wght@600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --turq:#20c9c0; --turq-dark:#0d7f7b; --ink:#06302e; --paper:#fffdf8; --rose:#ff4f7b;
+  --display:'Abril Fatface',Georgia,serif; --body:'DM Sans',system-ui,sans-serif; --hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+body{background:var(--turq);color:var(--ink);font-family:var(--body);line-height:1.5}
+
+/* Corazones flotando (solo después de la portada) */
+#hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .8s;z-index:0}
+#hearts.on{opacity:1}
+.heart{position:absolute;bottom:-60px;color:#fff;opacity:.55;animation:up linear infinite}
+@keyframes up{to{transform:translateY(-120vh) rotate(25deg)}}
+
+section{position:relative;z-index:1;min-height:100vh;min-height:100svh;scroll-snap-align:start}
+
+/* PORTADA */
+.cover{min-height:100vh;min-height:100svh;color:#fff;overflow:hidden;background:var(--turq-dark)}
+.cover>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,40,40,.45),transparent 28%,transparent 62%,rgba(0,30,30,.7))}
+.cvr{position:relative;z-index:1;min-height:100vh;min-height:100svh;max-width:640px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 22px 26px;display:flex;flex-direction:column}
+.mast{font-family:var(--display);font-size:min(13vw,6rem);line-height:1;text-align:center;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.issue{display:flex;justify-content:space-between;gap:4px;white-space:nowrap;border-top:1px solid rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.7);padding:6px 0;margin-top:6px;font:700 clamp(.48rem,2.3vw,.72rem)/1.2 var(--body);letter-spacing:.14em;text-transform:uppercase}
+.exc{margin-top:26px;max-width:62%}
+.exc small{display:block;color:#ffe45e;font:700 clamp(.6rem,2.8vw,.8rem) var(--body);letter-spacing:.2em;text-transform:uppercase}
+.exc h2{font:600 clamp(1.6rem,7vw,2.4rem)/1.05 'Oswald',sans-serif;text-transform:uppercase;margin-top:4px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.cvfoot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.cvfoot p{font:700 clamp(.58rem,2.6vw,.78rem) var(--body);letter-spacing:.2em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.bc{background:#fff;color:#000;padding:4px 6px 2px;text-align:center;font:.48rem 'Space Mono',monospace;letter-spacing:.06em}
+.bc i{display:block;width:84px;height:24px;background:repeating-linear-gradient(90deg,#000 0 1px,#fff 1px 3px,#000 3px 4px,#fff 4px 6px,#000 6px 8px,#fff 8px 9px)}
+
+/* PÁGINAS */
+.page{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 20px;gap:22px;text-align:center}
+.page h2{font-family:var(--display);font-weight:400;font-size:clamp(2rem,7vw,3.2rem);color:#fff;text-shadow:0 3px 0 var(--turq-dark)}
+.page{overflow-x:hidden}
+.page h2.cut{--cs:clamp(1.5rem,7.4vw,2.6rem);display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;max-width:92vw;text-shadow:none;line-height:1}
+.cut .w{display:flex;gap:3px}
+.cut .w>span{padding:2px 7px;font-weight:700;box-shadow:1px 3px 5px rgba(0,50,48,.35)}
+.photos{display:flex;flex-wrap:wrap;justify-content:center;gap:34px 10px;max-width:980px;width:100%;padding:44px 16px 30px}
+.polaroid{position:relative}
+.polaroid::before{content:"";position:absolute;top:-13px;left:50%;width:84px;height:28px;margin-left:-42px;background:var(--tape,rgba(255,255,255,.6));
+  transform:rotate(var(--t,-3deg));box-shadow:0 1px 3px rgba(0,50,48,.25);
+  clip-path:polygon(0 8%,4% 0,8% 10%,12% 0,100% 0,96% 25%,100% 50%,96% 75%,100% 100%,10% 100%,6% 90%,3% 100%,0 92%,3% 50%)}
+.polaroid{background:var(--paper);padding:12px 12px 8px;width:min(78vw,300px);box-shadow:2px 5px 10px rgba(0,50,48,.4),0 1px 2px rgba(0,50,48,.3);transform:translate(var(--x,0),var(--y,0)) rotate(var(--r,0deg));transition:transform .25s}
+.polaroid:hover{transform:translate(var(--x,0),var(--y,0)) rotate(0) scale(1.04);z-index:2}
+.polaroid video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+.polaroid .ph{aspect-ratio:4/5;background:linear-gradient(135deg,#bff5f1,#7fe3dd);position:relative;overflow:hidden;display:grid;place-items:center;color:var(--turq-dark);font-size:.9rem;padding:10px}
+.polaroid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.polaroid figcaption{font-family:var(--hand);font-size:1.6rem;padding-top:6px}
+.note{max-width:34ch;color:var(--ink);font-size:1.05rem}
+.end{font-family:var(--hand);font-size:2.4rem;color:#fff}
+
+/* REPRODUCTOR */
+.page.music h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(2rem,9vw,3rem);color:#d6f3ef;text-shadow:none}
+.music .sub{color:#d6f3ef;font-size:1.05rem;letter-spacing:.04em;margin-top:-12px}
+.player{width:min(92vw,380px);background:#10222b;color:#fff;border-radius:34px;padding:26px 24px 28px;box-shadow:0 22px 50px rgba(0,40,40,.4);text-align:left}
+.art{aspect-ratio:1;border-radius:22px;background:linear-gradient(135deg,#8ec5d6,#6a86be);position:relative;overflow:hidden;box-shadow:0 12px 28px rgba(0,0,0,.45)}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px}
+.meta h3{font-size:1.5rem;font-weight:500;line-height:1.15}
+.artist{color:#c4d3d6;font-size:1.05rem;margin-top:4px}
+.like{background:none;border:0;color:#fff;cursor:pointer;padding:6px;line-height:0}
+.like svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.8}
+.like[aria-pressed=true]{color:var(--rose)}.like[aria-pressed=true] svg{fill:currentColor}
+.dots{display:flex;gap:7px;margin-top:18px}
+.dots i{width:9px;height:9px;border-radius:50%;background:#6fe3d0}
+.playing .dots i{animation:pulse 1s ease-in-out infinite}
+.dots i:nth-child(2){animation-delay:.15s!important}.dots i:nth-child(3){animation-delay:.3s!important}.dots i:nth-child(4){animation-delay:.45s!important}
+@keyframes pulse{50%{transform:translateY(-5px);opacity:.5}}
+.bar{height:24px;position:relative;cursor:pointer;margin-top:8px}
+.bar::before,.bar i{content:"";position:absolute;left:0;top:50%;height:6px;margin-top:-3px;border-radius:9px}
+.bar::before{right:0;background:#3b4b50}
+.bar i{width:0;background:#fff}
+.bar b{position:absolute;top:50%;left:0;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:#fff}
+.times{display:flex;justify-content:space-between;font-size:.95rem;margin-top:4px}
+.ctrl{display:flex;justify-content:center;align-items:center;gap:40px;margin-top:20px}
+.skip{background:none;border:0;color:#fff;cursor:pointer;padding:8px;line-height:0}
+.skip svg{width:32px;height:32px;fill:currentColor}
+.play{width:88px;height:88px;border-radius:50%;border:0;background:#fff;color:#10222b;cursor:pointer;display:grid;place-items:center;transition:transform .15s}
+.play svg{width:40px;height:40px;fill:currentColor}
+.play:hover{transform:scale(1.06)}
+.play:focus-visible,.skip:focus-visible,.like:focus-visible{outline:3px solid var(--turq);outline-offset:3px}
+.player .msg{font-size:.8rem;color:#ffb3c4;text-align:center;margin-top:10px;min-height:1em}
+@media (prefers-reduced-motion:reduce){.dots i{animation:none!important}}
+
+@media (prefers-reduced-motion:reduce){.heart{animation:none;bottom:auto;top:calc(var(--y)*1%)}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div id="hearts" aria-hidden="true"></div>
+<main id="app"></main>
+
+<script>
+/* ============ EDITA SOLO ESTA PARTE ============ */
+const ALBUM = {
+  titulo: "Nosotros",              // nombre de la revista (se ajusta solo al ancho)
+  edicion: "Edición especial Nº 1",
+  fecha: "Octubre 2026",
+  precio: "Precio: un beso",
+  fotoPortada: "fotos/portada.jpg",
+  exclusiva: "Exclusiva",
+  titular: "Los viajes que nunca olvidaremos",
+  pie: "Para la caprichosa",
+  codigo: "8 410123 456789",
+  paginas: [
+    { titulo: "Nuestras fotos", texto: "Escribe aquí un recuerdo de ese día.",
+      fotos: [
+        {src:"fotos/foto1.jpg", pie:"Primer día"},
+        {src:"fotos/foto2.jpg", pie:"Nuestra primera cita"},
+        {src:"fotos/foto3.jpg", pie:"Playa"},
+        {src:"fotos/foto4.jpg", pie:"Montaña"},
+        {src:"fotos/foto5.jpg", pie:"Ciudad"},
+        {src:"fotos/foto6.jpg", pie:"Domingo de peli"},
+        {video:"videos/video1.mp4", poster:"fotos/video1.jpg", pie:"Nuestro primer vídeo"},
+        {video:"videos/video2.mp4", pie:"Otro vídeo"},
+        {video:"videos/video3.mp4", pie:"Y otro más"}
+        /* Añade más fotos o vídeos aquí, una línea por cada uno */
+      ] }
+  ],
+  musica: {
+    titulo: "Nuestra música",
+    subtitulo: "La banda sonora de nosotros",
+    canciones: [
+      { titulo: "Nuestra canción", artista: "Ana & Carlos", audio: "audio/cancion.mp3", portada: "audio/portada.jpg" }
+      /* Para más canciones, añade otra línea igual separada por coma */
+    ]
+  },
+  final: "Y lo que falta por vivir ♥"
+};
+/* ================================================ */
+
+const app = document.getElementById('app');
+const media = (f) => f.video
+  ? `<div class="ph"><span>Tu vídeo aquí<br>${f.video}</span><video src="${f.video}" ${f.poster?`poster="${f.poster}"`:''} controls playsinline preload="metadata" onerror="this.remove()"></video></div>`
+  : `<div class="ph"><span>Tu foto aquí<br>${f.src}</span><img src="${f.src}" alt="${f.pie||''}" loading="lazy" onerror="this.remove()"></div>`;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const FONTS = ["'Abril Fatface',serif", "Georgia,serif", "'Courier New',monospace", "Impact,'Arial Black',sans-serif", "'DM Sans',sans-serif", "'Caveat',cursive"];
+const PAPERS = [["#fffdf8","#06302e"], ["#f2e8c9","#3b2a14"], ["#ffe45e","#06302e"], ["#ff4f7b","#fff"], ["#111","#fff"], ["#e4e4e4","#222"],
+  ["#ff8a00","#fff"], ["#8d5cf6","#fff"], ["#2f6df6","#fff"], ["#7bdc65","#0b3b12"], ["#ff9ecb","#5a0a2d"], ["#c6f0ff","#073b57"], ["#e63946","#fff"], ["#ffd6a5","#4a2200"], ["#b8f2e6","#0a4a40"], ["#f6e05e","#7a1fa2"]];
+/* Título con letras recortadas de periódico */
+const cut = t => t.split(' ').map(w => `<span class="w">${[...w].map(ch => {
+  const [bg, fg] = pick(PAPERS);
+  return `<span style="font-family:${pick(FONTS)};background:${bg};color:${fg};font-size:calc(${rnd(.8,1.2).toFixed(2)} * var(--cs));transform:rotate(${rnd(-8,8).toFixed(1)}deg) translateY(${rnd(-4,4).toFixed(1)}px)">${ch}</span>`; }).join('')}</span>`).join('');
+
+let html = `
+<section class="cover" id="portada">
+  <img src="${ALBUM.fotoPortada}" alt="Portada" onerror="this.remove()">
+  <div class="cvr">
+    <div class="mast" id="mast">${ALBUM.titulo}</div>
+    <div class="issue"><span>${ALBUM.edicion}</span><span>${ALBUM.fecha}</span><span>${ALBUM.precio}</span></div>
+    <div class="exc"><small>${ALBUM.exclusiva}</small><h2>${ALBUM.titular}</h2></div>
+    <div class="cvfoot"><p>${ALBUM.pie}</p><div class="bc"><i></i>${ALBUM.codigo}</div></div>
+  </div></section>`;
+
+ALBUM.paginas.forEach((p, i) => {
+  html += `<section class="page" id="p${i+1}">
+    <h2 class="cut" aria-label="${p.titulo}">${cut(p.titulo)}</h2>
+    <div class="photos">${p.fotos.map(f=>`<figure class="polaroid" style="--t:${rnd(-7,7).toFixed(1)}deg;--tape:${pick(['rgba(255,255,255,.62)','rgba(255,228,94,.72)','rgba(255,79,123,.55)','rgba(242,232,201,.8)'])};--r:${rnd(-9,9).toFixed(1)}deg;--x:${rnd(-22,22).toFixed(0)}px;--y:${rnd(-18,34).toFixed(0)}px">${media(f)}<figcaption>${f.pie||''}</figcaption></figure>`).join('')}</div>
+    <p class="note">${p.texto||''}</p>
+  </section>`;
+});
+const M = ALBUM.musica;
+const I = {
+  play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  prev:'<svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg>',
+  next:'<svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg>',
+  heart:'<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+};
+html += `<section class="page music" id="musica">
+  <h2>${M.titulo}</h2><p class="sub">${M.subtitulo}</p>
+  <div class="player" id="player">
+    <div class="art"><img id="artimg" alt="" onerror="this.style.display='none'"></div>
+    <div class="meta"><div><h3 id="sTit"></h3><div class="artist" id="sArt"></div></div>
+      <button class="like" id="like" aria-label="Me gusta" aria-pressed="false">${I.heart}</button></div>
+    <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="bar" id="bar" role="slider" aria-label="Progreso"><i id="fill"></i><b id="knob"></b></div>
+    <div class="times"><span id="cur">0:00</span><span id="dur">0:00</span></div>
+    <div class="ctrl">
+      <button class="skip" id="prev" aria-label="Anterior">${I.prev}</button>
+      <button class="play" id="play" aria-label="Reproducir">${I.play}</button>
+      <button class="skip" id="next" aria-label="Siguiente">${I.next}</button>
+    </div>
+    <div class="msg" id="msg"></div>
+    <audio id="aud" preload="metadata"></audio>
+  </div>
+</section>`;
+html += `<section class="page"><p class="end">${ALBUM.final}</p></section>`;
+app.innerHTML = html;
+
+/* Corazones */
+const box = document.getElementById('hearts');
+for (let i = 0; i < 26; i++) {
+  const h = document.createElement('span');
+  h.className = 'heart'; h.textContent = '♥';
+  h.style.cssText = `left:${Math.random()*100}%;font-size:${14+Math.random()*30}px;animation-duration:${9+Math.random()*12}s;animation-delay:${-Math.random()*20}s;--y:${Math.random()*100}`;
+  box.appendChild(h);
+}
+/* Ajustar el título de la portada al ancho */
+const mast = document.getElementById('mast');
+const fit = () => { mast.style.fontSize = ''; let f = parseFloat(getComputedStyle(mast).fontSize);
+  while (mast.scrollWidth > mast.clientWidth && f > 18) { f -= 2; mast.style.fontSize = f + 'px'; } };
+fit(); document.fonts.ready.then(fit); addEventListener('resize', fit);
+
+/* Reproductor */
+const $ = id => document.getElementById(id);
+const aud = $('aud'), playBtn = $('play'), player = $('player'), songs = M.canciones;
+let idx = 0;
+const fmt = t => isFinite(t) ? Math.floor(t/60) + ':' + String(Math.floor(t%60)).padStart(2,'0') : '0:00';
+function load(i, auto) {
+  idx = (i + songs.length) % songs.length; const s = songs[idx];
+  $('sTit').textContent = s.titulo; $('sArt').textContent = s.artista;
+  const im = $('artimg'); im.style.display = ''; im.src = s.portada || '';
+  aud.src = s.audio; $('msg').textContent = '';
+  $('fill').style.width = '0%'; $('knob').style.left = '0%'; $('cur').textContent = $('dur').textContent = '0:00';
+  $('like').setAttribute('aria-pressed', 'false');
+  if (auto) aud.play().catch(() => {});
+}
+playBtn.onclick = () => aud.paused ? aud.play().catch(() => {}) : aud.pause();
+$('prev').onclick = () => aud.currentTime > 3 ? aud.currentTime = 0 : load(idx - 1, !aud.paused);
+$('next').onclick = () => load(idx + 1, !aud.paused);
+$('like').onclick = e => { const b = e.currentTarget; b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); };
+aud.onplay = () => { playBtn.innerHTML = I.pause; player.classList.add('playing'); };
+aud.onpause = () => { playBtn.innerHTML = I.play; player.classList.remove('playing'); };
+aud.onended = () => { aud.onpause(); if (songs.length > 1) load(idx + 1, true); };
+aud.onloadedmetadata = () => { $('dur').textContent = fmt(aud.duration); $('msg').textContent = ''; };
+aud.ontimeupdate = () => { const p = (aud.currentTime / aud.duration * 100) || 0;
+  $('cur').textContent = fmt(aud.currentTime); $('fill').style.width = p + '%'; $('knob').style.left = p + '%'; };
+aud.onerror = () => $('msg').textContent = 'Añade tu canción en ' + songs[idx].audio;
+$('bar').onclick = e => { const r = e.currentTarget.getBoundingClientRect();
+  if (aud.duration) aud.currentTime = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * aud.duration; };
+load(0, false);
+
+/* Mostrar corazones solo fuera de la portada */
+new IntersectionObserver(([e]) => box.classList.toggle('on', !e.isIntersecting), {threshold: .6})
+  .observe(document.getElementById('portada'));
+</script>
+</body>
+</html>
