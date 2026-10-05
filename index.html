@@ -57,6 +57,12 @@ section{position:relative;z-index:1;min-height:100vh;min-height:100svh;scroll-sn
 .polaroid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .polaroid figcaption{font-family:var(--hand);font-size:1.6rem;padding-top:6px}
 .note{max-width:34ch;color:var(--ink);font-size:1.05rem}
+.page p.note.cut{--cs:clamp(1.1rem,5vw,1.7rem);display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;max-width:92vw;line-height:1}
+.polaroid img{cursor:pointer}
+/* Foto ampliada al tocar (sin ningún símbolo) */
+#lb{position:fixed;inset:0;z-index:10;background:rgba(0,30,30,.88);display:none;align-items:center;justify-content:center;padding:16px;cursor:pointer}
+#lb.on{display:flex}
+#lb img{max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 10px 40px rgba(0,0,0,.5)}
 .end{font-family:var(--hand);font-size:2.4rem;color:#fff}
 
 /* REPRODUCTOR */
@@ -99,6 +105,7 @@ section{position:relative;z-index:1;min-height:100vh;min-height:100svh;scroll-sn
 
 <div id="hearts" aria-hidden="true"></div>
 <main id="app"></main>
+<div id="lb"><img alt=""></div>
 
 <script>
 /* ============ EDITA SOLO ESTA PARTE ============ */
@@ -167,7 +174,7 @@ ALBUM.paginas.forEach((p, i) => {
   html += `<section class="page" id="p${i+1}">
     <h2 class="cut" aria-label="${p.titulo}">${cut(p.titulo)}</h2>
     <div class="photos">${p.fotos.map(f=>`<figure class="polaroid" style="--t:${rnd(-7,7).toFixed(1)}deg;--tape:${pick(['rgba(255,255,255,.62)','rgba(255,228,94,.72)','rgba(255,79,123,.55)','rgba(242,232,201,.8)'])};--r:${rnd(-9,9).toFixed(1)}deg;--x:${rnd(-22,22).toFixed(0)}px;--y:${rnd(-18,34).toFixed(0)}px">${media(f)}<figcaption>${f.pie||''}</figcaption></figure>`).join('')}</div>
-    <p class="note">${p.texto||''}</p>
+    <p class="note cut" aria-label="${p.texto||''}">${cut(p.texto||'')}</p>
   </section>`;
 });
 const M = ALBUM.musica;
@@ -198,6 +205,15 @@ html += `<section class="page music" id="musica">
 </section>`;
 html += `<section class="page"><p class="end">${ALBUM.final}</p></section>`;
 app.innerHTML = html;
+
+/* Ampliar fotos al tocarlas; al tocar de nuevo se cierra */
+const lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
+document.addEventListener('click', e => {
+  const im = e.target.closest('.polaroid img');
+  if (im) { lbImg.src = im.src; lb.classList.add('on'); }
+  else if (lb.classList.contains('on')) lb.classList.remove('on');
+});
+addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('on'); });
 
 /* Corazones */
 const box = document.getElementById('hearts');
