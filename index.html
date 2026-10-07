@@ -300,5 +300,137 @@ load(0, false);
 new IntersectionObserver(([e]) => box.classList.toggle('on', !e.isIntersecting), {threshold: .6})
   .observe(document.getElementById('portada'));
 </script>
+
+<!-- ====== CARTAS CON FECHA DE DESBLOQUEO (añadido al final) ====== -->
+<style>
+#cartas{position:fixed;inset:0;z-index:50;display:none;justify-content:flex-start;overflow-y:auto;padding-top:calc(env(safe-area-inset-top,0px) + 64px);
+  background:radial-gradient(circle at 50% 20%,#3ee0d6 0%,#20c9c0 50%,#0d7f7b 100%)}
+#cartas.on{display:flex}
+html.cartas-on,html.cartas-on body{overflow:hidden}
+#cartas .cback{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);left:16px;font:700 .85rem var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink);background:#fff;border:0;border-radius:999px;padding:10px 18px;cursor:pointer;box-shadow:0 4px 12px rgba(0,50,48,.3)}
+.end.end-btn{display:inline-block;cursor:pointer;background:#fff;color:#000;border:0;border-radius:999px;padding:12px 28px;box-shadow:0 4px 12px rgba(0,50,48,.3);transition:transform .15s}
+.end.end-btn:hover{transform:scale(1.05)}
+.end-hint{display:block;font:700 .75rem var(--body);letter-spacing:.2em;text-transform:uppercase;color:#fff;margin-top:-6px}
+#cartas .cartas-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:26px 16px;max-width:900px;width:100%}
+#cartas .sobre{position:relative;width:min(78vw,240px);background:var(--paper);color:var(--ink);border:0;padding:24px 16px 18px;font-family:var(--body);cursor:pointer;
+  box-shadow:2px 5px 10px rgba(0,50,48,.4);transform:rotate(var(--r,0deg));transition:transform .25s}
+#cartas .sobre:hover{transform:rotate(0) scale(1.04)}
+#cartas .sobre .ico{display:block;font-size:2.6rem;line-height:1}
+#cartas .sobre strong{display:block;font-family:var(--hand);font-size:1.7rem;line-height:1.1;margin-top:8px}
+#cartas .sobre small{display:block;margin-top:8px;font-size:.85rem;opacity:.75}
+#cartas .sobre.lock{background:#e4e4e4}
+#cartas .sobre.lock .ico{filter:grayscale(1);opacity:.7}
+#cartas .cbtn,#cLb .cbtn{font:700 .9rem var(--body);letter-spacing:.15em;text-transform:uppercase;color:var(--ink);background:#fff;border:0;border-radius:999px;padding:13px 28px;cursor:pointer;box-shadow:0 6px 16px rgba(0,50,48,.3)}
+#cLb{position:fixed;inset:0;z-index:60;background:rgba(0,30,30,.88);display:none;align-items:center;justify-content:center;padding:16px}
+#cLb.on{display:flex}
+#cPaper{position:relative;background:var(--paper);color:var(--ink);width:min(94vw,520px);max-height:86vh;overflow:auto;padding:30px 26px 24px;box-shadow:0 10px 40px rgba(0,0,0,.5);text-align:left}
+#cPaper h3{font-family:var(--hand);font-size:2.2rem;line-height:1.1;margin-bottom:12px}
+#cPaper p{font-family:var(--hand);font-size:1.7rem;line-height:1.3;white-space:pre-wrap}
+#cPaper input,#cPaper textarea{width:100%;font:1rem var(--body);padding:10px;border:1px solid #bbb;border-radius:8px;margin-bottom:12px;background:#fff;color:var(--ink)}
+#cPaper label{display:block;font-size:.85rem;margin-bottom:4px}
+#cPaper .cact{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+#cPaper .cact .cbtn{box-shadow:none;border:1px solid var(--ink);padding:10px 18px}
+</style>
+<section class="page" id="cartas">
+  <button class="cback" id="cBack" type="button">← Volver</button>
+  <h2 class="cut" id="cTit" aria-label="Cartas">Cartas</h2>
+  <p class="note">Cada una se abre cuando llega su momento 💌</p>
+  <div class="cartas-grid" id="cartasGrid"></div>
+  <button class="cbtn" id="cNueva" type="button">+ Nueva carta</button>
+</section>
+<div id="cLb"><div id="cPaper"></div></div>
+<script>
+(function () {
+/* ============ EDITA AQUÍ TUS CARTAS ============
+   fecha: "AAAA-MM-DD" → se desbloquea ese día.
+   Sin fecha → siempre abierta (tipo "ábrela cuando...").   */
+const CARTAS = [
+  { titulo: "Ábrela cuando me eches de menos", texto: "Eres un bebe…" },
+  { titulo: "Día 1", texto: "Escribe aquí tu mensaje…", fecha: "2026-10-21" }
+];
+/* ================================================ */
+
+const KEY = 'cartas_nuevas';
+const getX = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } };
+const setX = a => { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} };
+const g = id => document.getElementById(id);
+const grid = g('cartasGrid'), ov = g('cLb'), paper = g('cPaper');
+if (typeof cut === 'function') g('cTit').innerHTML = cut('Cartas');
+
+const when = c => c.fecha ? new Date(c.fecha + 'T00:00:00') : null;
+const fmtD = d => d.toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' });
+function left(d) {
+  const ms = d - new Date();
+  if (ms >= 864e5) { const n = Math.ceil(ms / 864e5); return 'faltan ' + n + (n === 1 ? ' día' : ' días'); }
+  const h = Math.max(1, Math.ceil(ms / 36e5)); return 'faltan ' + h + (h === 1 ? ' hora' : ' horas');
+}
+function openOv(title, text, extraIdx) {
+  paper.innerHTML = '';
+  const h = document.createElement('h3'); h.textContent = title;
+  const p = document.createElement('p'); p.textContent = text;
+  paper.append(h, p);
+  if (extraIdx !== undefined) {
+    const a = document.createElement('div'); a.className = 'cact';
+    const del = document.createElement('button'); del.className = 'cbtn'; del.type = 'button'; del.textContent = 'Eliminar';
+    del.onclick = () => { if (confirm('¿Eliminar esta carta?')) { const x = getX(); x.splice(extraIdx, 1); setX(x); ov.classList.remove('on'); render(); } };
+    a.appendChild(del); paper.appendChild(a);
+  }
+  ov.classList.add('on');
+}
+function render() {
+  grid.innerHTML = '';
+  const all = CARTAS.concat(getX().map((c, i) => Object.assign({}, c, { _x: i })));
+  if (!all.length) { const e = document.createElement('p'); e.className = 'note'; e.textContent = 'Aún no hay cartas.'; grid.appendChild(e); }
+  all.forEach((c, i) => {
+    const d = when(c), locked = d && d > new Date();
+    const b = document.createElement('button'); b.type = 'button';
+    b.className = 'sobre' + (locked ? ' lock' : '');
+    b.style.setProperty('--r', (((i * 37) % 9) - 4) + 'deg');
+    const ico = document.createElement('span'); ico.className = 'ico'; ico.textContent = locked ? '🔒' : '💌';
+    const t = document.createElement('strong'); t.textContent = c.titulo;
+    const s = document.createElement('small');
+    s.textContent = locked ? 'Se abre el ' + fmtD(d) + ' · ' + left(d) : (d ? 'Abierta desde el ' + fmtD(d) : 'Ábrela cuando quieras');
+    b.append(ico, t, s);
+    b.onclick = () => locked
+      ? openOv('Todavía no… 🔒', 'Esta carta se abre el ' + fmtD(d) + ' (' + left(d) + ').')
+      : openOv(c.titulo, c.texto, c._x);
+    grid.appendChild(b);
+  });
+}
+g('cNueva').onclick = () => {
+  paper.innerHTML = '<h3>Nueva carta</h3>' +
+    '<input id="fT" placeholder="Título" maxlength="80">' +
+    '<textarea id="fX" rows="6" placeholder="Tu mensaje…"></textarea>' +
+    '<label for="fD">Se abre el (vacío = siempre abierta)</label><input id="fD" type="date">' +
+    '<div class="cact"><button class="cbtn" id="fNo" type="button">Cancelar</button><button class="cbtn" id="fOk" type="button">Guardar</button></div>';
+  ov.classList.add('on');
+  g('fNo').onclick = () => ov.classList.remove('on');
+  g('fOk').onclick = () => {
+    const t = g('fT').value.trim(), x = g('fX').value.trim(), d = g('fD').value;
+    if (!t || !x) { alert('Escribe un título y un mensaje.'); return; }
+    const arr = getX(); arr.push(d ? { titulo: t, texto: x, fecha: d } : { titulo: t, texto: x }); setX(arr);
+    ov.classList.remove('on'); render();
+  };
+};
+ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('on'); });
+/* La frase final funciona como botón para abrir las cartas */
+const sec = g('cartas'), root = document.documentElement;
+const openC = () => { sec.classList.add('on'); root.classList.add('cartas-on'); sec.scrollTop = 0; };
+const closeC = () => { sec.classList.remove('on'); root.classList.remove('cartas-on'); };
+const endEl = document.querySelector('.end');
+if (endEl) {
+  endEl.classList.add('end-btn'); endEl.setAttribute('role', 'button'); endEl.tabIndex = 0;
+  const hint = document.createElement('span'); hint.className = 'end-hint'; hint.textContent = 'Toca para abrir tus cartas 💌';
+  endEl.after(hint);
+  endEl.onclick = openC;
+  endEl.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openC(); } };
+}
+g('cBack').onclick = closeC;
+addEventListener('keydown', e => { if (e.key === 'Escape') { if (ov.classList.contains('on')) ov.classList.remove('on'); else closeC(); } });
+render(); setInterval(render, 60000);
+})();
+</script>
+<!-- ====== FIN CARTAS ====== -->
+
 </body>
 </html>
