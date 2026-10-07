@@ -304,8 +304,11 @@ new IntersectionObserver(([e]) => box.classList.toggle('on', !e.isIntersecting),
 <!-- ====== CARTAS CON FECHA DE DESBLOQUEO (añadido al final) ====== -->
 <style>
 #cartas{position:fixed;inset:0;z-index:50;display:none;justify-content:flex-start;overflow-y:auto;padding-top:calc(env(safe-area-inset-top,0px) + 64px);
-  background:radial-gradient(circle at 50% 20%,#3ee0d6 0%,#20c9c0 50%,#0d7f7b 100%)}
+  background:radial-gradient(circle at 50% 20%,#ffe3ec 0%,#ffc8da 50%,#ffa9c6 100%)}
 #cartas.on{display:flex}
+#cHearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+#cartas h2,#cartas .note,#cartas .cartas-grid,#cartas>.cbtn{position:relative;z-index:1}
+#cartas .cback{z-index:2}
 html.cartas-on,html.cartas-on body{overflow:hidden}
 #cartas .cback{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);left:16px;font:700 .85rem var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--ink);background:#fff;border:0;border-radius:999px;padding:10px 18px;cursor:pointer;box-shadow:0 4px 12px rgba(0,50,48,.3)}
 .end.end-btn{display:inline-block;cursor:pointer;background:#fff;color:#000;border:0;border-radius:999px;padding:12px 28px;box-shadow:0 4px 12px rgba(0,50,48,.3);transition:transform .15s}
@@ -316,7 +319,7 @@ html.cartas-on,html.cartas-on body{overflow:hidden}
   box-shadow:2px 5px 10px rgba(0,50,48,.4);transform:rotate(var(--r,0deg));transition:transform .25s}
 #cartas .sobre:hover{transform:rotate(0) scale(1.04)}
 #cartas .sobre .ico{display:block;font-size:2.6rem;line-height:1}
-#cartas .sobre strong{display:block;font-family:var(--hand);font-size:1.7rem;line-height:1.1;margin-top:8px}
+#cartas .sobre strong{display:block;font:700 .95rem/1.3 var(--body);letter-spacing:.12em;text-transform:uppercase;margin-top:10px}
 #cartas .sobre small{display:block;margin-top:8px;font-size:.85rem;opacity:.75}
 #cartas .sobre.lock{background:#e4e4e4}
 #cartas .sobre.lock .ico{filter:grayscale(1);opacity:.7}
@@ -324,8 +327,8 @@ html.cartas-on,html.cartas-on body{overflow:hidden}
 #cLb{position:fixed;inset:0;z-index:60;background:rgba(0,30,30,.88);display:none;align-items:center;justify-content:center;padding:16px}
 #cLb.on{display:flex}
 #cPaper{position:relative;background:var(--paper);color:var(--ink);width:min(94vw,520px);max-height:86vh;overflow:auto;padding:30px 26px 24px;box-shadow:0 10px 40px rgba(0,0,0,.5);text-align:left}
-#cPaper h3{font-family:var(--hand);font-size:2.2rem;line-height:1.1;margin-bottom:12px}
-#cPaper p{font-family:var(--hand);font-size:1.7rem;line-height:1.3;white-space:pre-wrap}
+#cPaper h3{font:700 1.1rem/1.3 var(--body);letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px}
+#cPaper p{font:400 1.05rem/1.7 var(--body);white-space:pre-wrap}
 #cPaper input,#cPaper textarea{width:100%;font:1rem var(--body);padding:10px;border:1px solid #bbb;border-radius:8px;margin-bottom:12px;background:#fff;color:var(--ink)}
 #cPaper label{display:block;font-size:.85rem;margin-bottom:4px}
 #cPaper .cact{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
@@ -345,8 +348,8 @@ html.cartas-on,html.cartas-on body{overflow:hidden}
    fecha: "AAAA-MM-DD" → se desbloquea ese día.
    Sin fecha → siempre abierta (tipo "ábrela cuando...").   */
 const CARTAS = [
-  { titulo: "Ábrela cuando me eches de menos", texto: "Eres un bebe…" },
-  { titulo: "Día 1", texto: "Escribe aquí tu mensaje…", fecha: "2026-10-21" }
+  { titulo: "Ábrela cuando me eches de menos", texto: "Escribe aquí tu mensaje…" },
+  { titulo: "Para nuestro aniversario", texto: "Escribe aquí tu mensaje…", fecha: "2026-12-25" }
 ];
 /* ================================================ */
 
@@ -426,6 +429,13 @@ if (endEl) {
   endEl.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openC(); } };
 }
 g('cBack').onclick = closeC;
+const chs = document.createElement('div'); chs.id = 'cHearts'; chs.setAttribute('aria-hidden', 'true');
+for (let i = 0; i < 26; i++) {
+  const h = document.createElement('span'); h.className = 'heart'; h.textContent = '♥';
+  h.style.cssText = 'left:' + Math.random() * 100 + '%;font-size:' + (14 + Math.random() * 30) + 'px;animation-duration:' + (9 + Math.random() * 12) + 's;animation-delay:' + (-Math.random() * 20) + 's;--y:' + Math.random() * 100;
+  chs.appendChild(h);
+}
+sec.prepend(chs);
 addEventListener('keydown', e => { if (e.key === 'Escape') { if (ov.classList.contains('on')) ov.classList.remove('on'); else closeC(); } });
 render(); setInterval(render, 60000);
 })();
