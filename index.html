@@ -100,8 +100,41 @@ section{position:relative;z-index:1;min-height:100vh;min-height:100svh;scroll-sn
 
 @media (prefers-reduced-motion:reduce){.heart{animation:none;bottom:auto;top:calc(var(--y)*1%)}html{scroll-behavior:auto}}
 </style>
+
+<!-- ====== PANTALLA DE INICIO (añadido) ====== -->
+<style>
+html.splash-on,html.splash-on body{overflow:hidden}
+#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px 28px;text-align:center;color:#fff;
+  background:radial-gradient(circle at 50% 35%,#3ee0d6 0%,#20c9c0 45%,#0d7f7b 100%);transition:opacity .8s ease,visibility .8s ease}
+#splash.out{opacity:0;visibility:hidden}
+#splash .sp-heart{font-size:3rem;line-height:1;color:#ffe45e;-webkit-text-stroke:1.5px #fff;paint-order:stroke fill;animation:spbeat 1.4s ease-in-out infinite}
+#splash .sp-title{font-family:'Abril Fatface',Georgia,serif;font-size:clamp(2.6rem,13vw,4.6rem);line-height:1;text-transform:uppercase;text-shadow:0 3px 0 #0d7f7b}
+#splash .sp-text{font-family:'Caveat',cursive;font-size:clamp(1.6rem,6.5vw,2.3rem);line-height:1.2;max-width:20ch;color:#fffdf8}
+#splash .sp-btn{margin-top:14px;font:700 1rem 'DM Sans',system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#06302e;background:#fff;border:0;border-radius:999px;padding:16px 40px;cursor:pointer;box-shadow:0 8px 22px rgba(0,50,48,.35);transition:transform .15s}
+#splash .sp-btn:hover{transform:scale(1.06)}
+#splash .sp-btn:focus-visible{outline:3px solid #ffe45e;outline-offset:3px}
+@keyframes spbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@media (prefers-reduced-motion:reduce){#splash .sp-heart{animation:none}#splash{transition:none}}
+</style>
 </head>
 <body>
+
+<div id="splash">
+  <div class="sp-heart" aria-hidden="true">♥</div>
+  <div class="sp-title">Dos locos</div>
+  <p class="sp-text">Hay recuerdos que merecen algo más que quedarse perdidos en la galería del móvil.</p>
+  <button class="sp-btn" id="spBtn" type="button">Entrar</button>
+</div>
+<script>
+document.documentElement.classList.add('splash-on');
+document.getElementById('spBtn').onclick = function () {
+  var s = document.getElementById('splash');
+  s.classList.add('out');
+  document.documentElement.classList.remove('splash-on');
+  setTimeout(function () { s.remove(); }, 900);
+};
+</script>
+<!-- ====== FIN PANTALLA DE INICIO ====== -->
 
 <div id="hearts" aria-hidden="true"></div>
 <main id="app"></main>
