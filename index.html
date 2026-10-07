@@ -440,7 +440,7 @@ const MAPA = {
 const hav = (a, b) => { const r = Math.PI / 180, R = 6371, dl = (b[0] - a[0]) * r, dn = (b[1] - a[1]) * r;
   const h = Math.sin(dl / 2) ** 2 + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
 g('mKm').textContent = Math.round(hav(MAPA.a.c, MAPA.b.c)).toLocaleString('es') + ' km';
-g('mTxt').textContent = 'en línea recta entre ' + MAPA.a.n + ' y ' + MAPA.b.n;
+g('mTxt').textContent = '' + MAPA.a.n + ' y ' + MAPA.b.n;
 let map = null;
 function initMap() {
   const el = g('mapa');
